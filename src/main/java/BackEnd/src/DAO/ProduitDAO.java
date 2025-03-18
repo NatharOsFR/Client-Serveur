@@ -50,4 +50,25 @@ public class ProduitDAO {
         }
         return produits;
     }
+
+    public boolean mettreAJourStock(int idProduit, int quantite) throws SQLException {
+        String query = "UPDATE PRODUIT SET quantité_disponible = quantité_disponible + ? WHERE id_produit = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, quantite);
+            stmt.setInt(2, idProduit);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    public int verifierStock(int idProduit) throws SQLException {
+        String query = "SELECT quantité_disponible FROM PRODUIT WHERE id_produit = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, idProduit);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("quantité_disponible");
+            }
+        }
+        return 0;
+    }
 }
