@@ -6,8 +6,8 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="Heptathlon" />
         <module name="Architecture ClientServeur" />
+        <module name="ArchitectureClientServeur" />
       </profile>
     </annotationProcessing>
   </component>
