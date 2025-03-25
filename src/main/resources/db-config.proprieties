@@ -1,4 +1,4 @@
 # db_config.properties
-db.url=jdbc:mysql://localhost:3306/DB_Heptathlon
+db.url=jdbc:mysql://localhost:3307/DB_Heptathlon
 db.username=root
-db.password=Heptathlon
+db.password=root
