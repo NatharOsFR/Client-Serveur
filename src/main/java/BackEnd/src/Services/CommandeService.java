@@ -4,6 +4,7 @@ import BackEnd.src.DAO.CommandeDAO;
 import BackEnd.src.DAO.DetailCommandeDAO;
 import BackEnd.src.Models.Commande;
 
+import java.sql.Date;
 import java.sql.SQLException;
 
 public class CommandeService {
@@ -43,5 +44,14 @@ public class CommandeService {
             return false;
         }
         return commandeDAO.mettreAJourStatutCommande(idCommande, "payée");
+    }
+
+    public double obtenirChiffreAffaire(Date date) {
+        try {
+            return commandeDAO.getChiffreAffaire(date);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0.0;
+        }
     }
 }

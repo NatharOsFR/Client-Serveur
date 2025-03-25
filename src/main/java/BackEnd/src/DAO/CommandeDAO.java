@@ -97,5 +97,15 @@ public class CommandeDAO {
             stmt.executeUpdate();
         }
     }
-
+    public double getChiffreAffaire(Date date) throws SQLException {
+        String query = "SELECT SUM(total_commande) AS total_chiffre_affaire FROM COMMANDE WHERE date_commande = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setDate(1, new java.sql.Date(date.getTime()));
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble("total_chiffre_affaire");
+            }
+        }
+        return 0.0;
+    }
 }
