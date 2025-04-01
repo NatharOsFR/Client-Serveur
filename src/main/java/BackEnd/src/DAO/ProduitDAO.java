@@ -12,10 +12,10 @@ public class ProduitDAO {
         this.connection = connection;
     }
 
-    public Produit getProduit(int idProduit) throws SQLException {
-        String query = "SELECT * FROM Produit WHERE id_produit = ?";
+    public Produit getProduit(String nomProduit) throws SQLException {
+        String query = "SELECT * FROM Produit WHERE nom_produit = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setInt(1, idProduit);
+            stmt.setString(1, nomProduit);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new Produit(

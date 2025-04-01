@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 import java.sql.SQLException;
 
 public interface IProduitService extends Remote {
-    Produit getProduit(int idProduit) throws RemoteException, SQLException;
-    int acheterProduit(int idProduit) throws RemoteException, SQLException;
+    public Produit getProduit(String nomProduit) throws RemoteException, SQLException;
+
+    public int acheterProduit(String nomProduit) throws RemoteException, SQLException;
 }

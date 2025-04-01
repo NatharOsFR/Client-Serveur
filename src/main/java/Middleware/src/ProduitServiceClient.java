@@ -20,7 +20,7 @@ public class ProduitServiceClient {
 
     public void afficherProduit(int idProduit) {
         try {
-            String produit = String.valueOf(produitServiceRMI.getProduit(idProduit));
+            String produit = String.valueOf(produitServiceRMI.getProduit(String.valueOf(idProduit)));
             System.out.println("Détails du produit : " + produit);
         } catch (Exception e) {
             System.out.println("Erreur lors de la récupération du produit: " + e.getMessage());
@@ -29,7 +29,7 @@ public class ProduitServiceClient {
 
     public String acheterProduit(int idProduit) {
         try {
-            String reponse = String.valueOf(produitServiceRMI.acheterProduit(idProduit));
+            String reponse = String.valueOf(produitServiceRMI.acheterProduit(String.valueOf(idProduit)));
             System.out.println(reponse);
         } catch (Exception e) {
             System.out.println("Erreur lors de l'achat du produit: " + e.getMessage());
@@ -46,7 +46,7 @@ public class ProduitServiceClient {
 
     public String getProduit(String idProduit) {
         try {
-            Produit produit = produitServiceRMI.getProduit(Integer.parseInt(idProduit));
+            Produit produit = produitServiceRMI.getProduit((idProduit));
             if (produit != null) {
                 return "Produit: ";
             } else {

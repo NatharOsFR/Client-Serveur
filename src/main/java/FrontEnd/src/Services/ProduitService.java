@@ -10,6 +10,7 @@ public class ProduitService {
 
     public ProduitService() {
         try {
+            // Connexion au service RMI
             produitServiceRMI = (IProduitService) Naming.lookup("rmi://localhost/ProduitService");
             System.out.println("Connexion au service RMI réussie !");
         } catch (Exception e) {
@@ -18,9 +19,9 @@ public class ProduitService {
         }
     }
 
-    public String getProduit(String idProduit) {
+    public String getProduit(String nomProduit) {
         try {
-            Produit produit = produitServiceRMI.getProduit(Integer.parseInt(idProduit));
+            Produit produit = produitServiceRMI.getProduit(nomProduit);
             if (produit != null) {
                 return produit.toString();
             } else {
@@ -31,9 +32,9 @@ public class ProduitService {
         }
     }
 
-    public String acheterProduit(String idProduit) {
+    public String acheterProduit(String nomProduit) {
         try {
-            String reponse = String.valueOf(produitServiceRMI.acheterProduit(Integer.parseInt(idProduit)));
+            String reponse = String.valueOf(produitServiceRMI.acheterProduit(nomProduit));
             return reponse;
         } catch (Exception e) {
             return "Erreur lors de l'achat du produit: " + e.getMessage();

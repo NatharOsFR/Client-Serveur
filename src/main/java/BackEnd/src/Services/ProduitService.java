@@ -13,26 +13,26 @@ public class ProduitService {
         this.commandeService = commandeService;
     }
 
-    public int acheterProduit(int idProduit) throws SQLException {
-        Produit produit = produitDAO.getProduit(idProduit);
+    public int acheterProduit(String nomProduit) throws SQLException {
+        Produit produit = produitDAO.getProduit(nomProduit);
         if (produit == null) {
             throw new SQLException("Produit introuvable.");
         }
         if (produit.getQuantiteDisponible() <= 0) {
-            throw new SQLException("Stock insuffisant pour le produit " + idProduit);
+            throw new SQLException("Stock insuffisant pour le produit " + nomProduit);
         }
 
         int idCommande = commandeService.getCommandeEnCoursOuCreer();
 
-        commandeService.ajouterProduitACommande(idCommande, idProduit, 1);
+        commandeService.ajouterProduitACommande(idCommande, produit.getIdProduit(), 1);
 
-        produitDAO.mettreAJourStock(idProduit, -1);
+        produitDAO.mettreAJourStock(produit.getIdProduit(), -1);
 
         return idCommande;
     }
 
-    public Produit getProduit(int idProduit) throws SQLException {
-        Produit produit = produitDAO.getProduit(idProduit);
+    public Produit getProduit(String nomProduit) throws SQLException {
+        Produit produit = produitDAO.getProduit(nomProduit);
         if (produit == null) {
             throw new SQLException("Produit introuvable.");
         }

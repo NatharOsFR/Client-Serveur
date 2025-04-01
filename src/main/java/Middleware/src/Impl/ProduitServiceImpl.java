@@ -17,12 +17,12 @@ public class ProduitServiceImpl extends UnicastRemoteObject implements IProduitS
     }
 
     @Override
-    public Produit getProduit(int idProduit) throws RemoteException, SQLException {
-        return produitService.getProduit(idProduit);
+    public Produit getProduit(String nomProduit) throws RemoteException, SQLException {
+        return produitService.getProduit(nomProduit);
     }
 
     @Override
-    public int acheterProduit(int idProduit) throws RemoteException, SQLException {
-        return produitService.acheterProduit(idProduit);
+    public int acheterProduit(String nomProduit) throws RemoteException, SQLException {
+        return produitService.acheterProduit(nomProduit);
     }
 }
