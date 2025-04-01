@@ -14,7 +14,7 @@ public class DetailCommandeDAO {
 
     public List<DetailCommande> getDetailsParCommande(int idCommande) throws SQLException {
         List<DetailCommande> details = new ArrayList<>();
-        String query = "SELECT * FROM DETAIL_COMMANDE WHERE id_commande = ?";
+        String query = "SELECT * FROM DetailCommande WHERE id_commande = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, idCommande);
             ResultSet rs = stmt.executeQuery();
@@ -31,7 +31,7 @@ public class DetailCommandeDAO {
     }
 
     public void ajouterProduitACommande(int idCommande, int idProduit, int quantite) throws SQLException {
-        String query = "INSERT INTO DETAIL_COMMANDE (id_commande, id_produit, quantite_produit) VALUES (?, ?, ?)";
+        String query = "INSERT INTO DetailCommande (id_commande, id_produit, quantite_produit) VALUES (?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, idCommande);
             stmt.setInt(2, idProduit);
@@ -41,7 +41,7 @@ public class DetailCommandeDAO {
     }
 
     public void mettreAJourQuantiteProduit(int idCommande, int idProduit, int nouvelleQuantite) throws SQLException {
-        String query = "UPDATE DETAIL_COMMANDE SET quantite_produit = ? WHERE id_commande = ? AND id_produit = ?";
+        String query = "UPDATE DetailCommande SET quantite_produit = ? WHERE id_commande = ? AND id_produit = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, nouvelleQuantite);
             stmt.setInt(2, idCommande);
@@ -51,7 +51,7 @@ public class DetailCommandeDAO {
     }
 
     public Integer getQuantiteProduitDansCommande(int idCommande, int idProduit) throws SQLException {
-        String query = "SELECT quantite_produit FROM DETAIL_COMMANDE WHERE id_commande = ? AND id_produit = ?";
+        String query = "SELECT quantite_produit FROM DetailCommande WHERE id_commande = ? AND id_produit = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, idCommande);
             stmt.setInt(2, idProduit);

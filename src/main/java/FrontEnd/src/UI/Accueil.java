@@ -91,7 +91,7 @@ public class Accueil extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String searchText = searchField.getText();
                 if (!searchText.isEmpty()) {
-                    String result = produitService.acheterProduit(searchText, 1);
+                    String result = produitService.acheterProduit(searchText);
                     JOptionPane.showMessageDialog(null, result);
                 }
             }

@@ -13,7 +13,7 @@ public class ProduitDAO {
     }
 
     public Produit getProduit(int idProduit) throws SQLException {
-        String query = "SELECT * FROM PRODUIT WHERE id_produit = ?";
+        String query = "SELECT * FROM Produit WHERE id_produit = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, idProduit);
             ResultSet rs = stmt.executeQuery();
@@ -24,7 +24,7 @@ public class ProduitDAO {
                         rs.getString("nom_produit"),
                         rs.getString("description_produit"),
                         rs.getInt("prix_produit"),
-                        rs.getInt("quantité_disponible")
+                        rs.getInt("quantite_disponible")
                 );
             }
         }
@@ -33,7 +33,7 @@ public class ProduitDAO {
 
     public List<Produit> getProduitsParCategorie(int idCategorie) throws SQLException {
         List<Produit> produits = new ArrayList<>();
-        String query = "SELECT * FROM PRODUIT WHERE id_categorie = ? AND quantité_disponible > 0";
+        String query = "SELECT * FROM Produit WHERE id_categorie = ? AND quantite_disponible > 0";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, idCategorie);
             ResultSet rs = stmt.executeQuery();
@@ -44,7 +44,7 @@ public class ProduitDAO {
                         rs.getString("nom_produit"),
                         rs.getString("description_produit"),
                         rs.getInt("prix_produit"),
-                        rs.getInt("quantité_disponible")
+                        rs.getInt("quantite_disponible")
                 ));
             }
         }
@@ -52,7 +52,7 @@ public class ProduitDAO {
     }
 
     public boolean mettreAJourStock(int idProduit, int quantite) throws SQLException {
-        String query = "UPDATE PRODUIT SET quantité_disponible = quantité_disponible + ? WHERE id_produit = ?";
+        String query = "UPDATE Produit SET quantite_disponible = quantite_disponible + ? WHERE id_produit = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, quantite);
             stmt.setInt(2, idProduit);
@@ -61,12 +61,12 @@ public class ProduitDAO {
     }
 
     public int verifierStock(int idProduit) throws SQLException {
-        String query = "SELECT quantité_disponible FROM PRODUIT WHERE id_produit = ?";
+        String query = "SELECT quantite_disponible FROM Produit WHERE id_produit = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, idProduit);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return rs.getInt("quantité_disponible");
+                return rs.getInt("quantite_disponible");
             }
         }
         return 0;

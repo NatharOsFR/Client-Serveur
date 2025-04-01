@@ -16,10 +16,11 @@ public class CommandeService {
         this.detailCommandeDAO = detailCommandeDAO;
     }
 
-    public int getCommandeEnCoursOuCreer(int idClient) throws SQLException {
-        int idCommande = commandeDAO.getCommandeEnCours(idClient);
+
+    public int getCommandeEnCoursOuCreer() throws SQLException {
+        int idCommande = commandeDAO.getCommandeEnCours();
         if (idCommande == -1) {
-            idCommande = commandeDAO.creerCommande(idClient);
+            idCommande = commandeDAO.creerCommande();
         }
         return idCommande;
     }

@@ -1,6 +1,9 @@
 package BackEnd.src.Models;
 
-public class Produit {
+import java.io.Serializable;
+
+public class Produit implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int idProduit;
     private int idCategorie;
     private String nomProduit;
@@ -34,4 +37,14 @@ public class Produit {
 
     public int getQuantiteDisponible() { return quantiteDisponible; }
     public void setQuantiteDisponible(int quantiteDisponible) { this.quantiteDisponible = quantiteDisponible; }
+
+    @Override
+    public String toString() {
+        return "Produit{idProduit=" + idProduit +
+                ", idCategorie=" + idCategorie +
+                ", nomProduit='" + nomProduit + '\'' +
+                ", descriptionProduit='" + descriptionProduit + '\'' +
+                ", prixProduit=" + prixProduit +
+                ", quantiteDisponible=" + quantiteDisponible + '}';
+    }
 }

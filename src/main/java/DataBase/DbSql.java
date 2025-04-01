@@ -16,7 +16,7 @@ public class DbSql {
     try (InputStream input = DbSql.class.getClassLoader().getResourceAsStream("db-config.proprieties")) {
       if (input == null) {
 
-        System.out.println("Je n'ai pas trouver le fichier de configuration");
+        System.out.println("Je n'ai pas trouvé le fichier de configuration");
         return null;
       }
       properties.load(input);

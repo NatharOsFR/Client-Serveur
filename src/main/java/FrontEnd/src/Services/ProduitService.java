@@ -1,20 +1,42 @@
 package FrontEnd.src.Services;
 
+import BackEnd.src.Models.Produit;
+import Middleware.src.Interfaces.IProduitService;
+
+import java.rmi.Naming;
+
 public class ProduitService {
-    public String getProduit(String idProduit) {
-        return appelerBackend("getProduit", idProduit);
-    }
+    private IProduitService produitServiceRMI;
 
-    public String acheterProduit(String idProduit, int idClient) {
-        return appelerBackend("acheterProduit", idProduit + "," + idClient);
-    }
-
-    private String appelerBackend(String action, String param) {
-        if ("getProduit".equals(action)) {
-            return "Produit trouvé: ID " + param + ", Quantité: 10, Prix: 100€";
-        } else if ("acheterProduit".equals(action)) {
-            return "Achat réussi pour le produit ID " + param.split(",")[0];
+    public ProduitService() {
+        try {
+            produitServiceRMI = (IProduitService) Naming.lookup("rmi://localhost/ProduitService");
+            System.out.println("Connexion au service RMI réussie !");
+        } catch (Exception e) {
+            System.out.println("Erreur lors de la connexion RMI : " + e.getMessage());
+            e.printStackTrace();
         }
-        return "Erreur: Action inconnue";
+    }
+
+    public String getProduit(String idProduit) {
+        try {
+            Produit produit = produitServiceRMI.getProduit(Integer.parseInt(idProduit));
+            if (produit != null) {
+                return produit.toString();
+            } else {
+                return "Produit introuvable.";
+            }
+        } catch (Exception e) {
+            return "Erreur lors de la récupération du produit: " + e.getMessage();
+        }
+    }
+
+    public String acheterProduit(String idProduit) {
+        try {
+            String reponse = String.valueOf(produitServiceRMI.acheterProduit(Integer.parseInt(idProduit)));
+            return reponse;
+        } catch (Exception e) {
+            return "Erreur lors de l'achat du produit: " + e.getMessage();
+        }
     }
 }
