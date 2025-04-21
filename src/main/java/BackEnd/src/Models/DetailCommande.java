@@ -1,6 +1,8 @@
 package BackEnd.src.Models;
+import java.io.Serializable;
 
-public class DetailCommande {
+public class DetailCommande implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int idDetail;
     private int idCommande;
     private int idProduit;

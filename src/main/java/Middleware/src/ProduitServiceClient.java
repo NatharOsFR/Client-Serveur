@@ -4,6 +4,7 @@ import BackEnd.src.Models.Produit;
 import Middleware.src.Interfaces.IProduitService;
 
 import java.rmi.Naming;
+import java.util.List;
 
 public class ProduitServiceClient {
     private IProduitService produitServiceRMI;
@@ -27,33 +28,11 @@ public class ProduitServiceClient {
         }
     }
 
-    public String acheterProduit(int idProduit) {
-        try {
-            String reponse = String.valueOf(produitServiceRMI.acheterProduit(String.valueOf(idProduit)));
-            System.out.println(reponse);
-        } catch (Exception e) {
-            System.out.println("Erreur lors de l'achat du produit: " + e.getMessage());
-        }
-        return null;
-    }
+
 
     public static void main(String[] args) {
         ProduitServiceClient client = new ProduitServiceClient();
 
-        client.afficherProduit(1);
-        client.acheterProduit(1);
     }
 
-    public String getProduit(String idProduit) {
-        try {
-            Produit produit = produitServiceRMI.getProduit((idProduit));
-            if (produit != null) {
-                return "Produit: ";
-            } else {
-                return "Produit introuvable.";
-            }
-        } catch (Exception e) {
-            return "Erreur lors de la récupération du produit: " + e.getMessage();
-        }
-    }
 }

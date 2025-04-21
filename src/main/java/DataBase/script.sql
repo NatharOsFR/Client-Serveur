@@ -27,9 +27,9 @@ CREATE TABLE Produit (
 CREATE TABLE Commande (
     id_commande INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     date_commande DATE NOT NULL,
-    status_commande ENUM('En cours', 'Payé', 'Annulé') NOT NULL,
+    status_commande ENUM('En cours', 'Paye', 'Annule') NOT NULL,
     total_commande INT NOT NULL,
-    mode_de_paiement ENUM('Carte', 'Espèce', 'Virement') NOT NULL
+    mode_de_paiement ENUM('Carte', 'Espece', 'Virement') NOT NULL
 );
 
 -- Table DétailCommande

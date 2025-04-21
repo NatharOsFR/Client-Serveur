@@ -1,6 +1,9 @@
 package BackEnd.src.Models;
 
-public class Categorie {
+import java.io.Serializable;
+
+public class Categorie implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int idCategorie;
     private String nomCategorie;
     private String descriptionCategorie;

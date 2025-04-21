@@ -25,10 +25,11 @@ public class ProduitServiceServer {
             ProduitDAO produitDAO = new ProduitDAO(connection);
             CommandeDAO commandeDAO = new CommandeDAO(connection);
             DetailCommandeDAO detailCommandeDAO = new DetailCommandeDAO(connection);
-            CommandeService commandeService = new CommandeService(commandeDAO, detailCommandeDAO);
 
-            ProduitService produitService = new ProduitService(produitDAO, commandeService);
-            ProduitServiceImpl produitServiceImpl = new ProduitServiceImpl(produitService);
+            CommandeService commandeService = new CommandeService(commandeDAO, detailCommandeDAO);
+            ProduitService produitService = new ProduitService(connection, produitDAO, commandeService);
+
+            ProduitServiceImpl produitServiceImpl = new ProduitServiceImpl(produitService, commandeService);
 
             LocateRegistry.createRegistry(1099);
             Naming.rebind("rmi://localhost/ProduitService", produitServiceImpl);

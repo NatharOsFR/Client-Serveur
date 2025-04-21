@@ -1,18 +1,18 @@
 package FrontEnd.src.UI;
 
 import FrontEnd.src.Services.ProduitService;
+import BackEnd.src.Models.Produit;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-
+import java.util.List;
 
 public class Accueil extends JFrame {
     private JTextField searchField;
     private JButton searchButton;
     private JButton buyButton;
-    private JButton categoriesButton;
     private JButton panierButton;
     private JButton factureButton;
     private ProduitService produitService;
@@ -37,7 +37,7 @@ public class Accueil extends JFrame {
         JPanel searchPanel = new JPanel();
         searchPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 10, 10));
         searchField = new JTextField(20);
-        searchButton = new JButton("Rechercher Produit");
+        searchButton = new JButton("Rechercher");
         buyButton = new JButton("Ajouter Produit");
 
         searchField.setPreferredSize(new Dimension(200, 30));
@@ -58,21 +58,16 @@ public class Accueil extends JFrame {
 
         JPanel buttonPanel = new JPanel();
         buttonPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 20));
-        categoriesButton = new JButton("Voir Catégories");
         panierButton = new JButton("Voir Mon Panier");
         factureButton = new JButton("Consulter Ma Facture");
 
-        categoriesButton.setBackground(new Color(70, 130, 180));
         panierButton.setBackground(new Color(70, 130, 180));
         factureButton.setBackground(new Color(100, 149, 237));
-        categoriesButton.setForeground(Color.WHITE);
         panierButton.setForeground(Color.WHITE);
         factureButton.setForeground(Color.WHITE);
-        categoriesButton.setFont(new Font("Arial", Font.BOLD, 14));
         panierButton.setFont(new Font("Arial", Font.BOLD, 14));
         factureButton.setFont(new Font("Arial", Font.BOLD, 14));
 
-        buttonPanel.add(categoriesButton);
         buttonPanel.add(panierButton);
         buttonPanel.add(factureButton);
         add(buttonPanel);
@@ -81,19 +76,126 @@ public class Accueil extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String searchText = searchField.getText();
                 if (!searchText.isEmpty()) {
-                    String result = produitService.getProduit(searchText);
-                    JOptionPane.showMessageDialog(null, result);
+                    try {
+                        List<Produit> produits = produitService.getProduitsParNomCategorie(searchText);
+
+                        if (produits != null && !produits.isEmpty()) {
+                            StringBuilder productsInfo = new StringBuilder(" 🛒 Produits disponibles dans la catégorie " + searchText + ":\n\n");
+                            for (Produit produit : produits) {
+                                productsInfo.append("Nom : ").append(produit.getNomProduit())
+                                        .append("\nDescription : ").append(produit.getDescriptionProduit())
+                                        .append("\nPrix : ").append(produit.getPrixProduit()).append(" €")
+                                        .append("\nQuantité disponible : ").append(produit.getQuantiteDisponible()).append("\n\n");
+                            }
+                            JOptionPane.showMessageDialog(null, productsInfo.toString(), "Produits de la catégorie", JOptionPane.INFORMATION_MESSAGE);
+                        } else {
+                            Produit produit = produitService.getProduit(searchText);
+                            if (produit != null) {
+                                String formatted = "🛒 Produit :\n\n" +
+                                        "Nom : " + produit.getNomProduit() + "\n" +
+                                        "Description : " + produit.getDescriptionProduit() + "\n" +
+                                        "Prix : " + produit.getPrixProduit() + " €\n" +
+                                        "Quantité disponible : " + produit.getQuantiteDisponible();
+                                JOptionPane.showMessageDialog(null, formatted, "Détail Produit", JOptionPane.INFORMATION_MESSAGE);
+                            } else {
+                                JOptionPane.showMessageDialog(null, "Produit introuvable.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
+                    } catch (Exception ex) {
+                        ex.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Erreur lors de la recherche", "Erreur", JOptionPane.ERROR_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Veuillez entrer un nom de produit ou un nom de catégorie.", "Champ vide", JOptionPane.WARNING_MESSAGE);
                 }
             }
         });
 
         buyButton.addActionListener(new ActionListener() {
+            @Override
             public void actionPerformed(ActionEvent e) {
-                String searchText = searchField.getText();
-                if (!searchText.isEmpty()) {
-                    String result = produitService.acheterProduit(searchText);
-                    JOptionPane.showMessageDialog(null, result);
+                String searchText = searchField.getText().trim();
+                if (searchText.isEmpty()) {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Veuillez entrer un nom de produit.",
+                            "Champ vide",
+                            JOptionPane.WARNING_MESSAGE
+                    );
+                    return;
                 }
+                try {
+                    Produit produit = produitService.getProduit(searchText);
+                    if (produit == null) {
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "Produit introuvable. Veuillez d'abord rechercher un produit valide.",
+                                "Erreur",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                        return;
+                    }
+                    String quantiteStr = JOptionPane.showInputDialog(
+                            null,
+                            "Quantité à ajouter au panier (1–" + produit.getQuantiteDisponible() + ") :",
+                            "Quantité",
+                            JOptionPane.PLAIN_MESSAGE
+                    );
+                    if (quantiteStr == null) {
+                        return;
+                    }
+                    int quantite;
+                    try {
+                        quantite = Integer.parseInt(quantiteStr);
+                    } catch (NumberFormatException ex) {
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "Quantité invalide.",
+                                "Erreur",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                        return;
+                    }
+                    if (quantite < 1 || quantite > produit.getQuantiteDisponible()) {
+                        JOptionPane.showMessageDialog(
+                                null,
+                                "La quantité doit être comprise entre 1 et " + produit.getQuantiteDisponible() + ".",
+                                "Quantité hors stock",
+                                JOptionPane.ERROR_MESSAGE
+                        );
+                        return;
+                    }
+                    String result = produitService.acheterProduit(searchText, quantite);
+                    JOptionPane.showMessageDialog(
+                            null,
+                            result,
+                            "Ajout au panier",
+                            JOptionPane.INFORMATION_MESSAGE
+                    );
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Erreur lors de l'ajout au panier : " + ex.getMessage(),
+                            "Erreur",
+                            JOptionPane.ERROR_MESSAGE
+                    );
+                }
+            }
+        });
+
+        panierButton.addActionListener(e -> {
+            try {
+                int idCommande = produitService.getCommandeEnCours();
+                if (idCommande < 0) {
+                    JOptionPane.showMessageDialog(null, "Aucune commande en cours.", "Panier vide", JOptionPane.INFORMATION_MESSAGE);
+                } else {
+                    new Panier(produitService, idCommande);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Erreur lors de la récupération du panier : " + ex.getMessage(),
+                        "Erreur", JOptionPane.ERROR_MESSAGE);
             }
         });
 

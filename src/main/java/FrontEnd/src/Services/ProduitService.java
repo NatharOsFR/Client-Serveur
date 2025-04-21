@@ -1,16 +1,17 @@
 package FrontEnd.src.Services;
 
+import BackEnd.src.Models.DetailCommande;
 import BackEnd.src.Models.Produit;
 import Middleware.src.Interfaces.IProduitService;
 
 import java.rmi.Naming;
+import java.util.List;
 
 public class ProduitService {
     private IProduitService produitServiceRMI;
 
     public ProduitService() {
         try {
-            // Connexion au service RMI
             produitServiceRMI = (IProduitService) Naming.lookup("rmi://localhost/ProduitService");
             System.out.println("Connexion au service RMI réussie !");
         } catch (Exception e) {
@@ -19,25 +20,66 @@ public class ProduitService {
         }
     }
 
-    public String getProduit(String nomProduit) {
+    public Produit getProduit(String nomProduit) {
         try {
-            Produit produit = produitServiceRMI.getProduit(nomProduit);
-            if (produit != null) {
-                return produit.toString();
-            } else {
-                return "Produit introuvable.";
-            }
+            return produitServiceRMI.getProduit(nomProduit);
         } catch (Exception e) {
-            return "Erreur lors de la récupération du produit: " + e.getMessage();
+            e.printStackTrace();
+            return null;
         }
     }
 
-    public String acheterProduit(String nomProduit) {
+    public Produit getProduitParId(int idProduit) {
         try {
-            String reponse = String.valueOf(produitServiceRMI.acheterProduit(nomProduit));
-            return reponse;
+            return produitServiceRMI.getProduitParId(idProduit);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public String acheterProduit(String nomProduit, int quantite) {
+        try {
+            int idCommande = produitServiceRMI.acheterProduit(nomProduit, quantite);
+            return "Produit ajouté au panier ! Commande N° : " + idCommande;
         } catch (Exception e) {
             return "Erreur lors de l'achat du produit: " + e.getMessage();
+        }
+    }
+
+    public int getCommandeEnCours() {
+        try {
+            return produitServiceRMI.getCommandeEnCours();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    public List<Produit> getProduitsParNomCategorie(String nomCategorie) {
+        try {
+            return produitServiceRMI.getProduitsParNomCategorie(nomCategorie);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public List<DetailCommande> getDetailsParCommande(int idCommande) {
+        try {
+            return produitServiceRMI.getDetailsParCommande(idCommande);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean payerCommande(int idCommande, String modePaiement) {
+        try {
+            return produitServiceRMI.payerCommande(idCommande, modePaiement);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

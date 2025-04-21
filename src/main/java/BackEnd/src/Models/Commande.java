@@ -1,7 +1,9 @@
 package BackEnd.src.Models;
+import java.io.Serializable;
 import java.util.Date;
 
-public class Commande {
+public class Commande implements Serializable {
+    private static final long serialVersionUID = 1L;
     private int idCommande;
     private Date dateCommande;
     private String statusCommande;

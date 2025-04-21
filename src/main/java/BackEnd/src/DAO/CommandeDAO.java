@@ -29,7 +29,6 @@ public class CommandeDAO {
         }
         return null;
     }
-
     public int getCommandeEnCours() throws SQLException {
         String query = "SELECT id_commande FROM Commande WHERE status_commande = 'en cours'";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -40,7 +39,6 @@ public class CommandeDAO {
         }
         return -1;
     }
-
     public List<Commande> getCommandesParDate(Date date) throws SQLException {
         List<Commande> commandes = new ArrayList<>();
         String query = "SELECT * FROM Commande WHERE date_commande = ?";
@@ -59,19 +57,25 @@ public class CommandeDAO {
         }
         return commandes;
     }
-
-    public boolean mettreAJourStatutCommande(int idCommande, String nouveauStatut) throws SQLException {
-        String query = "UPDATE Commande SET statut = ? WHERE id_commande = ?";
+    public boolean mettreAJourPaiementEtStatut(int idCommande, String modePaiement, String nouveauStatut) throws SQLException {
+        String query = "UPDATE Commande SET mode_de_paiement = ?, status_commande = ? WHERE id_commande = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setString(1, nouveauStatut);
-            stmt.setInt(2, idCommande);
+            System.out.println("Tentative de mise à jour de la commande :");
+            System.out.println("ID : " + idCommande);
+            System.out.println("Mode de paiement : " + modePaiement);
+            System.out.println("Nouveau statut : " + nouveauStatut);
+
+            stmt.setString(1, modePaiement);
+            stmt.setString(2, nouveauStatut);
+            stmt.setInt(3, idCommande);
             return stmt.executeUpdate() > 0;
         }
     }
 
     public int creerCommande() throws SQLException {
-        String query = "INSERT INTO Commande (id_client, statut) VALUES (?, 'en cours')";
+        String query = "INSERT INTO Commande (date_commande, status_commande, total_commande, mode_de_paiement) VALUES (?, 'En cours', 0, 'Carte')";
         try (PreparedStatement stmt = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setDate(1, new java.sql.Date(System.currentTimeMillis()));
             stmt.executeUpdate();
             ResultSet generatedKeys = stmt.getGeneratedKeys();
             if (generatedKeys.next()) {
@@ -83,18 +87,20 @@ public class CommandeDAO {
     }
 
     public void mettreAJourTotalCommande(int idCommande) throws SQLException {
-        String query = "UPDATE Commande c SET total_commande = " +
-                "(SELECT COALESCE(SUM(dc.quantite * p.prix_produit), 0) " +
-                "FROM detail_commande dc " +
-                "JOIN Produit p ON dc.id_produit = p.id_produit " +
-                "WHERE dc.id_commande = ?) " +
-                "WHERE c.id_commande = ?";
+        String query =
+                "UPDATE Commande c SET total_commande = (" +
+                        "  SELECT COALESCE(SUM(dc.quantite_produit * p.prix_produit), 0) " +
+                        "  FROM DetailCommande dc " +
+                        "  JOIN Produit p ON dc.id_produit = p.id_produit " +
+                        "  WHERE dc.id_commande = ?" +
+                        ") WHERE c.id_commande = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
             stmt.setInt(1, idCommande);
             stmt.setInt(2, idCommande);
             stmt.executeUpdate();
         }
     }
+
     public double getChiffreAffaire(Date date) throws SQLException {
         String query = "SELECT SUM(total_commande) AS total_chiffre_affaire FROM Commande WHERE date_commande = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
