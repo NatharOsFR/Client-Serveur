@@ -6,9 +6,9 @@ public class ConnexionDB{
   public static void main(String[] args) {
     Connection conn = DbSql.getConnection();
     if (conn != null) {
-      System.out.println("✅ Connexion réussie à MySQL !");
+      System.out.println("Connexion réussie à MySQL !");
     } else {
-      System.out.println("❌ Erreur de connexion !");
+      System.out.println("Erreur de connexion !");
     }
   }
 }

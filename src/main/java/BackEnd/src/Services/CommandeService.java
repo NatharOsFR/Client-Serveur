@@ -2,6 +2,7 @@ package BackEnd.src.Services;
 
 import BackEnd.src.DAO.CommandeDAO;
 import BackEnd.src.DAO.DetailCommandeDAO;
+import BackEnd.src.DAO.ProduitDAO;
 import BackEnd.src.Models.Commande;
 import BackEnd.src.Models.DetailCommande;
 
@@ -10,14 +11,16 @@ import java.sql.SQLException;
 import java.util.List;
 
 public class CommandeService {
+
+    private ProduitDAO produitDAO;
     private final CommandeDAO commandeDAO;
     private final DetailCommandeDAO detailCommandeDAO;
 
-    public CommandeService(CommandeDAO commandeDAO, DetailCommandeDAO detailCommandeDAO) {
+    public CommandeService(CommandeDAO commandeDAO, DetailCommandeDAO detailCommandeDAO, ProduitDAO produitDAO) {
         this.commandeDAO = commandeDAO;
         this.detailCommandeDAO = detailCommandeDAO;
+        this.produitDAO = produitDAO;
     }
-
 
     public int getCommandeEnCoursOuCreer() throws SQLException {
         int idCommande = commandeDAO.getCommandeEnCours();
@@ -62,7 +65,9 @@ public class CommandeService {
         boolean update = commandeDAO.mettreAJourPaiementEtStatut(idCommande, modePaiement, "Paye");
 
         if (update) {
-          //  FactureGenerator.genererFacturePDF(commande, details, modePaiement);
+            FactureService factureService = new FactureService(produitDAO);
+            factureService.genererFacturePDF(idCommande, details, modePaiement);
+
             System.out.println("Paiement validé et facture générée.");
             return true;
         } else {
@@ -71,7 +76,16 @@ public class CommandeService {
         }
     }
 
+    public String getDerniereFacture() throws SQLException {
+        Commande derniereCommande = commandeDAO.getDerniereCommande();
+        if (derniereCommande != null) {
+            return "factures/facture_commande_" + derniereCommande.getIdCommande() + ".pdf";
+        }
+        return null;
+    }
+
     public double obtenirChiffreAffaire(Date date) {
+        if (date == null) return 0.0;
         try {
             return commandeDAO.getChiffreAffaire(date);
         } catch (SQLException e) {

@@ -2,17 +2,18 @@ package FrontEnd.src.Services;
 
 import BackEnd.src.Models.DetailCommande;
 import BackEnd.src.Models.Produit;
-import Middleware.src.Interfaces.IProduitService;
+import Middleware.src.Interfaces.IRMIService;
 
 import java.rmi.Naming;
 import java.util.List;
+import java.util.Date;
 
-public class ProduitService {
-    private IProduitService produitServiceRMI;
+public class FrontService {
+    private IRMIService produitServiceRMI;
 
-    public ProduitService() {
+    public FrontService() {
         try {
-            produitServiceRMI = (IProduitService) Naming.lookup("rmi://localhost/ProduitService");
+            produitServiceRMI = (IRMIService) Naming.lookup("rmi://localhost/ProduitService");
             System.out.println("Connexion au service RMI réussie !");
         } catch (Exception e) {
             System.out.println("Erreur lors de la connexion RMI : " + e.getMessage());
@@ -80,6 +81,33 @@ public class ProduitService {
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    public String getDerniereFacture() {
+        try {
+            return produitServiceRMI.getDerniereFacture();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public boolean ajouterExemplairesProduit(int idProduit, int quantite) {
+        try {
+            return produitServiceRMI.ajouterExemplairesProduit(idProduit, quantite);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public double obtenirChiffreAffaire(Date date) {
+        try {
+            return produitServiceRMI.obtenirChiffreAffaire(date);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0.0;
         }
     }
 }

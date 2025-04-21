@@ -2,7 +2,7 @@ package FrontEnd.src.UI;
 
 import BackEnd.src.Models.DetailCommande;
 import BackEnd.src.Models.Produit;
-import FrontEnd.src.Services.ProduitService;
+import FrontEnd.src.Services.FrontService;
 
 import javax.swing.*;
 import java.awt.*;
@@ -10,7 +10,7 @@ import java.util.List;
 
 public class Panier extends JFrame {
 
-    public Panier(ProduitService produitService, int idCommande) {
+    public Panier(FrontService frontService, int idCommande) {
         setTitle("Mon Panier");
         setSize(600, 600);
         setLocationRelativeTo(null);
@@ -30,7 +30,7 @@ public class Panier extends JFrame {
         productPanel.setBackground(new Color(245, 245, 245));
 
         try {
-            List<DetailCommande> details = produitService.getDetailsParCommande(idCommande);
+            List<DetailCommande> details = frontService.getDetailsParCommande(idCommande);
             if (details == null || details.isEmpty()) {
                 JLabel emptyLabel = new JLabel("Votre panier est vide.");
                 emptyLabel.setFont(new Font("Arial", Font.ITALIC, 16));
@@ -39,7 +39,7 @@ public class Panier extends JFrame {
             } else {
                 int total = 0;
                 for (DetailCommande dc : details) {
-                    Produit p = produitService.getProduitParId(dc.getIdProduit());
+                    Produit p = frontService.getProduitParId(dc.getIdProduit());
                     int sousTotal = dc.getQuantiteProduit() * p.getPrixProduit();
                     String productLine = "<html>" + p.getNomProduit() + " × " + dc.getQuantiteProduit() + " = " + sousTotal + " €</html>";
                     JLabel productLabel = new JLabel(productLine);
@@ -99,10 +99,7 @@ public class Panier extends JFrame {
             );
 
             if (modePaiement != null) {
-                boolean paiementOK = produitService.payerCommande(idCommande, modePaiement);
-
-                System.out.println("Tentative de paiement pour la commande ID = " + idCommande + ", Mode = " + modePaiement);
-                System.out.println("Résultat de paiement : " + paiementOK);
+                boolean paiementOK = frontService.payerCommande(idCommande, modePaiement);
 
                 if (paiementOK) {
                     JOptionPane.showMessageDialog(this, "Commande payée avec succès !");

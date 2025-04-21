@@ -3,7 +3,7 @@ package Middleware.src;
 import BackEnd.src.DAO.CommandeDAO;
 import BackEnd.src.DAO.DetailCommandeDAO;
 import BackEnd.src.Services.ProduitService;
-import Middleware.src.Impl.ProduitServiceImpl;
+import Middleware.src.Impl.RMIServiceImpl;
 
 import java.rmi.Naming;
 import java.rmi.registry.LocateRegistry;
@@ -15,7 +15,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class ProduitServiceServer {
+public class Server {
     public static void main(String[] args) {
         try {
             Connection connection = DriverManager.getConnection(
@@ -26,13 +26,13 @@ public class ProduitServiceServer {
             CommandeDAO commandeDAO = new CommandeDAO(connection);
             DetailCommandeDAO detailCommandeDAO = new DetailCommandeDAO(connection);
 
-            CommandeService commandeService = new CommandeService(commandeDAO, detailCommandeDAO);
+            CommandeService commandeService = new CommandeService(commandeDAO, detailCommandeDAO, produitDAO);
             ProduitService produitService = new ProduitService(connection, produitDAO, commandeService);
 
-            ProduitServiceImpl produitServiceImpl = new ProduitServiceImpl(produitService, commandeService);
+            RMIServiceImpl RMIServiceImpl = new RMIServiceImpl(produitService, commandeService);
 
             LocateRegistry.createRegistry(1099);
-            Naming.rebind("rmi://localhost/ProduitService", produitServiceImpl);
+            Naming.rebind("rmi://localhost/ProduitService", RMIServiceImpl);
 
             System.out.println("Serveur RMI prêt à accepter les connexions...");
 

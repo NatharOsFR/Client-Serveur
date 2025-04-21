@@ -4,10 +4,11 @@ import BackEnd.src.Models.DetailCommande;
 import BackEnd.src.Models.Produit;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.Date;
 import java.sql.SQLException;
 import java.util.List;
 
-public interface IProduitService extends Remote {
+public interface IRMIService extends Remote {
     Produit getProduit(String nomProduit) throws RemoteException, SQLException;
 
     Produit getProduitParId(int idProduit) throws RemoteException, SQLException;
@@ -18,8 +19,14 @@ public interface IProduitService extends Remote {
 
     List<Produit> getProduitsParNomCategorie(String nomCategorie) throws RemoteException, SQLException;
 
-    public List<DetailCommande> getDetailsParCommande(int idCommande) throws RemoteException, SQLException;
+    List<DetailCommande> getDetailsParCommande(int idCommande) throws RemoteException, SQLException;
 
     boolean payerCommande(int idCommande, String modePaiement) throws RemoteException;
+
+    String getDerniereFacture() throws RemoteException;
+
+    boolean ajouterExemplairesProduit(int idProduit, int quantite) throws RemoteException;
+
+    double obtenirChiffreAffaire(Date date) throws RemoteException;
 
 }

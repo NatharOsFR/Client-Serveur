@@ -39,21 +39,6 @@ public class ProduitService {
         return idCommande;
     }
 
-    public int ajouterProduitAuPanier(String nomProduit) throws SQLException {
-        Produit produit = produitDAO.getProduit(nomProduit);
-        if (produit == null) {
-            throw new SQLException("Produit introuvable.");
-        }
-        if (produit.getQuantiteDisponible() <= 0) {
-            throw new SQLException("Stock insuffisant pour le produit " + nomProduit);
-        }
-
-        int idCommande = commandeService.getCommandeEnCoursOuCreer();
-        commandeService.ajouterProduitACommande(idCommande, produit.getIdProduit(), 1);
-
-        return idCommande;
-    }
-
     public Produit getProduit(String nomProduit) throws SQLException {
         Produit produit = produitDAO.getProduit(nomProduit);
         return produit;
@@ -63,9 +48,6 @@ public class ProduitService {
         return produitDAO.getProduitParId(idProduit);
     }
 
-    public List<Produit> getProduitsParCategorie(int idCategorie) throws SQLException {
-        return produitDAO.getProduitsParCategorie(idCategorie);
-    }
 
     public List<Produit> getProduitsParNomCategorie(String nomCategorie) throws SQLException {
         CategorieDAO categorieDAO = new CategorieDAO(connection);
@@ -76,6 +58,15 @@ public class ProduitService {
             return produitDAO.getProduitsParCategorie(categorie.getIdCategorie());
         } else {
             return null;
+        }
+    }
+
+    public boolean ajouterExemplairesProduit(int idProduit, int quantiteAAjouter) {
+        try {
+            return produitDAO.mettreAJourStock(idProduit, quantiteAAjouter);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 }

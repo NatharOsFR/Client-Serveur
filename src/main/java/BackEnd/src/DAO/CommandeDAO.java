@@ -39,24 +39,7 @@ public class CommandeDAO {
         }
         return -1;
     }
-    public List<Commande> getCommandesParDate(Date date) throws SQLException {
-        List<Commande> commandes = new ArrayList<>();
-        String query = "SELECT * FROM Commande WHERE date_commande = ?";
-        try (PreparedStatement stmt = connection.prepareStatement(query)) {
-            stmt.setDate(1, new java.sql.Date(date.getTime()));
-            ResultSet rs = stmt.executeQuery();
-            while (rs.next()) {
-                commandes.add(new Commande(
-                        rs.getInt("id_commande"),
-                        rs.getDate("date_commande"),
-                        rs.getString("status_commande"),
-                        rs.getInt("total_commande"),
-                        rs.getString("mode_de_paiement")
-                ));
-            }
-        }
-        return commandes;
-    }
+
     public boolean mettreAJourPaiementEtStatut(int idCommande, String modePaiement, String nouveauStatut) throws SQLException {
         String query = "UPDATE Commande SET mode_de_paiement = ?, status_commande = ? WHERE id_commande = ?";
         try (PreparedStatement stmt = connection.prepareStatement(query)) {
@@ -99,6 +82,23 @@ public class CommandeDAO {
             stmt.setInt(2, idCommande);
             stmt.executeUpdate();
         }
+    }
+
+    public Commande getDerniereCommande() throws SQLException {
+        String query = "SELECT * FROM Commande ORDER BY id_commande DESC LIMIT 1";
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return new Commande(
+                        rs.getInt("id_commande"),
+                        rs.getDate("date_commande"),
+                        rs.getString("status_commande"),
+                        rs.getInt("total_commande"),
+                        rs.getString("mode_de_paiement")
+                );
+            }
+        }
+        return null;
     }
 
     public double getChiffreAffaire(Date date) throws SQLException {

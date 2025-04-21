@@ -1,12 +1,13 @@
 package FrontEnd.src.UI;
 
-import FrontEnd.src.Services.ProduitService;
+import FrontEnd.src.Services.FrontService;
 import BackEnd.src.Models.Produit;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.util.List;
 
 public class Accueil extends JFrame {
@@ -15,10 +16,10 @@ public class Accueil extends JFrame {
     private JButton buyButton;
     private JButton panierButton;
     private JButton factureButton;
-    private ProduitService produitService;
+    private FrontService frontService;
 
     public Accueil() {
-        produitService = new ProduitService();
+        frontService = new FrontService();
 
         setTitle("Accueil");
         setSize(500, 500);
@@ -77,7 +78,7 @@ public class Accueil extends JFrame {
                 String searchText = searchField.getText();
                 if (!searchText.isEmpty()) {
                     try {
-                        List<Produit> produits = produitService.getProduitsParNomCategorie(searchText);
+                        List<Produit> produits = frontService.getProduitsParNomCategorie(searchText);
 
                         if (produits != null && !produits.isEmpty()) {
                             StringBuilder productsInfo = new StringBuilder(" 🛒 Produits disponibles dans la catégorie " + searchText + ":\n\n");
@@ -89,7 +90,7 @@ public class Accueil extends JFrame {
                             }
                             JOptionPane.showMessageDialog(null, productsInfo.toString(), "Produits de la catégorie", JOptionPane.INFORMATION_MESSAGE);
                         } else {
-                            Produit produit = produitService.getProduit(searchText);
+                            Produit produit = frontService.getProduit(searchText);
                             if (produit != null) {
                                 String formatted = "🛒 Produit :\n\n" +
                                         "Nom : " + produit.getNomProduit() + "\n" +
@@ -125,7 +126,7 @@ public class Accueil extends JFrame {
                     return;
                 }
                 try {
-                    Produit produit = produitService.getProduit(searchText);
+                    Produit produit = frontService.getProduit(searchText);
                     if (produit == null) {
                         JOptionPane.showMessageDialog(
                                 null,
@@ -165,7 +166,7 @@ public class Accueil extends JFrame {
                         );
                         return;
                     }
-                    String result = produitService.acheterProduit(searchText, quantite);
+                    String result = frontService.acheterProduit(searchText, quantite);
                     JOptionPane.showMessageDialog(
                             null,
                             result,
@@ -186,16 +187,37 @@ public class Accueil extends JFrame {
 
         panierButton.addActionListener(e -> {
             try {
-                int idCommande = produitService.getCommandeEnCours();
+                int idCommande = frontService.getCommandeEnCours();
                 if (idCommande < 0) {
                     JOptionPane.showMessageDialog(null, "Aucune commande en cours.", "Panier vide", JOptionPane.INFORMATION_MESSAGE);
                 } else {
-                    new Panier(produitService, idCommande);
+                    new Panier(frontService, idCommande);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
                 JOptionPane.showMessageDialog(null, "Erreur lors de la récupération du panier : " + ex.getMessage(),
                         "Erreur", JOptionPane.ERROR_MESSAGE);
+            }
+        });
+
+        factureButton.addActionListener(e -> {
+            try {
+                String factureFilePath = frontService.getDerniereFacture();
+
+                if (factureFilePath != null) {
+                    File factureFile = new File(factureFilePath);
+
+                    if (factureFile.exists()) {
+                        Desktop.getDesktop().open(factureFile);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "La facture pour cette commande est introuvable.", "Erreur", JOptionPane.WARNING_MESSAGE);
+                    }
+                } else {
+                    JOptionPane.showMessageDialog(null, "Aucune facture disponible pour cette commande.", "Erreur", JOptionPane.ERROR_MESSAGE);
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Erreur lors de l'affichage de la facture : " + ex.getMessage(), "Erreur", JOptionPane.ERROR_MESSAGE);
             }
         });
 

@@ -5,18 +5,19 @@ import BackEnd.src.Models.DetailCommande;
 import BackEnd.src.Models.Produit;
 import BackEnd.src.Services.ProduitService;
 import BackEnd.src.Services.CommandeService;
-import Middleware.src.Interfaces.IProduitService;
+import Middleware.src.Interfaces.IRMIService;
 
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
+import java.util.Date;
 import java.sql.SQLException;
 import java.util.List;
 
-public class ProduitServiceImpl extends UnicastRemoteObject implements IProduitService {
+public class RMIServiceImpl extends UnicastRemoteObject implements IRMIService {
     private ProduitService produitService;
     private CommandeService commandeService;
 
-    public ProduitServiceImpl(ProduitService produitService, CommandeService commandeService) throws RemoteException {
+    public RMIServiceImpl(ProduitService produitService, CommandeService commandeService) throws RemoteException {
         this.produitService = produitService;
         this.commandeService = commandeService;
     }
@@ -59,6 +60,36 @@ public class ProduitServiceImpl extends UnicastRemoteObject implements IProduitS
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+    @Override
+    public String getDerniereFacture() throws RemoteException {
+        try {
+            return commandeService.getDerniereFacture();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public boolean ajouterExemplairesProduit(int idProduit, int quantite) throws RemoteException {
+        try {
+            return produitService.ajouterExemplairesProduit(idProduit, quantite);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+    @Override
+    public double obtenirChiffreAffaire(Date date) throws RemoteException {
+        try {
+            java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+
+            return commandeService.obtenirChiffreAffaire(sqlDate);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0.0;
         }
     }
 }
